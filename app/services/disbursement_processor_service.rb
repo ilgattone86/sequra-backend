@@ -23,7 +23,7 @@ class DisbursementProcessorService
   private
 
   def orders_to_disburse(date)
-    merchants = ::Merchant.live_on(date)
+    merchants = ::Merchant.live_before(date)
 
     orders_not_disbursed = ::Order.not_disbursed
 
