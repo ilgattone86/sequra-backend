@@ -19,4 +19,8 @@ class Merchant < ApplicationRecord
 
   # Enums
   enum :disbursement_frequency, [ :daily, :weekly ]
+
+  # Scopes
+  scope :live_on, ->(date) { where(live_on: ..date) }
+  scope :for_live_on_week_day, ->(date) { where("EXTRACT(DOW FROM live_on) = ?", date.wday) }
 end

@@ -53,4 +53,8 @@ group :development, :test do
 
   # Annotate models
   gem "annotate"
+
+  # Rspec for tests
+  gem "rspec-rails"
+  gem "shoulda-matchers"
 end

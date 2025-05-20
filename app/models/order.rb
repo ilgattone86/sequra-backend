@@ -27,10 +27,11 @@ class Order < ApplicationRecord
   scope :disbursed, -> { where.not(disbursement: nil) }
   scope :not_disbursed, -> { where(disbursement: nil) }
   scope :for_order_received_at, ->(date) { where(order_received_at: date) }
-  scope :for_order_received_between, ->(from, to) { where(order_received_at: from..to) }
+  scope :for_order_received_in_range, ->(date_range) { where(order_received_at: date_range) }
+  scope :for_order_received_between, ->(from, to) { for_order_received_in_range(from..to) }
 
   # Methods
-  def compute_commission_fee
+  def commission_fee
     ::CommissionFeeCalculatorService.calculate(amount)
   end
 end
