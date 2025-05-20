@@ -22,6 +22,9 @@ class Order < ApplicationRecord
   belongs_to :merchant, class_name: "::Merchant"
   belongs_to :disbursement, class_name: "::Disbursement", optional: true
 
+  # Validations
+  validates :amount, comparison: { greater_than_or_equal_to: 0.0 }
+
   # Scopes
   scope :for_merchant, ->(merchant) { where(merchant: merchant) }
   scope :disbursed, -> { where.not(disbursement: nil) }

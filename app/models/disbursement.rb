@@ -19,6 +19,10 @@
 class Disbursement < ApplicationRecord
   # Associations
   belongs_to :merchant, class_name: "::Merchant"
-
   has_many :orders, class_name: "::Order", dependent: :nullify
+
+  # Validations
+  validates :total_amount, comparison: { greater_than_or_equal_to: 0.0 }
+  validates :total_commission, comparison: { greater_than_or_equal_to: 0.0 }
+  validates :disbursed_amount, comparison: { greater_than_or_equal_to: 0.0 }
 end

@@ -3,13 +3,13 @@ namespace :disbursement do
   task generate_all: :environment do
     merchants_count = ::Merchant.count
     if merchants_count.zero?
-      puts '🤔 No merchants found, did you seed the database? Dont worry, I will do it for you. 🤗'
+      puts '🤔 No merchants found, did you seed the database? 🤌🏻 Dont worry, I will do it for you. 🤗'
       Rake::Task["db:seed:replant"].invoke
     end
 
     orders_count = ::Order.count
     if merchants_count.zero?
-      puts '🤔 No orders found, did you seed the database? Dont worry, I will do it for you. 🤗'
+      puts '🤔 No orders found, did you seed the database? 🤌🏻 Dont worry, I will do it for you. 🤗'
       Rake::Task["db:seed:replant"].invoke
     end
 
