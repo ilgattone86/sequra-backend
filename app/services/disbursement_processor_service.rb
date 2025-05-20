@@ -31,7 +31,7 @@ class DisbursementProcessorService
                                                     .joins(:merchant)
                                                     .merge(merchants.daily)
 
-    orders_disbursables_weekly = orders_not_disbursed.for_order_received_in_range(date - 6.days..date)
+    orders_disbursables_weekly = orders_not_disbursed.for_order_received_in_range((date - 6.days)..date)
                                                      .joins(:merchant)
                                                      .merge(merchants.weekly.for_live_on_week_day(date))
 

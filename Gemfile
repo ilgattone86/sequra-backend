@@ -57,4 +57,7 @@ group :development, :test do
   # Rspec for tests
   gem "rspec-rails"
   gem "shoulda-matchers"
+
+  # Clean the database between tests
+  gem 'database_cleaner-active_record'
 end
