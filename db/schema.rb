@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_19_150059) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_19_160147) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "disbursements", force: :cascade do |t|
+    t.bigint "merchant_id", null: false, comment: "Merchant that the disbursement belongs to"
+    t.date "disbursement_date", null: false, comment: "The date of the disbursement"
+    t.float "total_commission", default: 0.0, null: false, comment: "The sum of the commission fees of all the orders"
+    t.float "total_amount", default: 0.0, null: false, comment: "The total amount of the disbursement, it is the sum of all the orders amount"
+    t.float "disbursed_amount", default: 0.0, null: false, comment: "The amount that the merchant will receive after the commission fees are deducted"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["merchant_id"], name: "index_disbursements_on_merchant_id"
+  end
 
   create_table "merchants", force: :cascade do |t|
     t.string "email", null: false, comment: "Merchant email"
@@ -30,8 +41,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_150059) do
     t.bigint "merchant_id", null: false, comment: "Merchant that the order belongs to"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "disbursement_id", comment: "The disbursement that the order belongs to, can be null if the order is not disbursed yet"
+    t.index ["disbursement_id"], name: "index_orders_on_disbursement_id"
     t.index ["merchant_id"], name: "index_orders_on_merchant_id"
   end
 
+  add_foreign_key "disbursements", "merchants"
+  add_foreign_key "orders", "disbursements"
   add_foreign_key "orders", "merchants"
 end

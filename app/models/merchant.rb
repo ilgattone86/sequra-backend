@@ -15,6 +15,7 @@
 class Merchant < ApplicationRecord
   # Associations
   has_many :orders, class_name: "::Order", dependent: :destroy
+  has_many :disbursements, class_name: "::Disbursement", dependent: :destroy
 
   # Enums
   enum :disbursement_frequency, [ :daily, :weekly ]
