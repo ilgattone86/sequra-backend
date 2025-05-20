@@ -2,10 +2,16 @@ desc "Generate all disbursements for the orders in the db"
 namespace :disbursement do
   task generate_all: :environment do
     merchants_count = ::Merchant.count
-    raise 'No merchants found, did you run the bin/rails db:prepare (or seed) 🤔' if merchants_count.zero?
+    if merchants_count.zero?
+      puts '🤔 No merchants found, did you seed the database? Dont worry, I will do it for you. 🤗'
+      Rake::Task["db:seed:replant"].invoke
+    end
 
     orders_count = ::Order.count
-    raise 'No orders found, did you run the bin/rails db:prepare (or seed) 🤔' if orders_count.zero?
+    if merchants_count.zero?
+      puts '🤔 No orders found, did you seed the database? Dont worry, I will do it for you. 🤗'
+      Rake::Task["db:seed:replant"].invoke
+    end
 
     puts "\n⏳ Generating disbursements for #{orders_count} orders and #{merchants_count} merchants."
 
