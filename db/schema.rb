@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_19_160147) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_20_063424) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,6 +44,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_160147) do
     t.bigint "disbursement_id", comment: "The disbursement that the order belongs to, can be null if the order is not disbursed yet"
     t.index ["disbursement_id"], name: "index_orders_on_disbursement_id"
     t.index ["merchant_id"], name: "index_orders_on_merchant_id"
+    t.index ["order_received_at"], name: "index_orders_on_order_received_at"
   end
 
   add_foreign_key "disbursements", "merchants"

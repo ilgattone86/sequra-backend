@@ -12,8 +12,9 @@
 #
 # Indexes
 #
-#  index_orders_on_disbursement_id  (disbursement_id)
-#  index_orders_on_merchant_id      (merchant_id)
+#  index_orders_on_disbursement_id    (disbursement_id)
+#  index_orders_on_merchant_id        (merchant_id)
+#  index_orders_on_order_received_at  (order_received_at)
 #
 
 class Order < ApplicationRecord
@@ -23,6 +24,10 @@ class Order < ApplicationRecord
 
   # Scopes
   scope :for_merchant, ->(merchant) { where(merchant: merchant) }
+  scope :disbursed, -> { where.not(disbursement: nil) }
+  scope :not_disbursed, -> { where(disbursement: nil) }
+  scope :for_order_received_at, ->(date) { where(order_received_at: date) }
+  scope :for_order_received_between, ->(from, to) { where(order_received_at: from..to) }
 
   # Methods
   def compute_commission_fee
