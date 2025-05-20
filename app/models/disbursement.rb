@@ -13,7 +13,7 @@
 #
 # Indexes
 #
-#  index_disbursements_on_merchant_id  (merchant_id)
+#  index_disbursements_on_merchant_id_and_disbursement_date  (merchant_id,disbursement_date) UNIQUE
 #
 
 class Disbursement < ApplicationRecord

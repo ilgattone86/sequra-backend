@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_20_063424) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_20_211943) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,7 +22,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_063424) do
     t.float "disbursed_amount", default: 0.0, null: false, comment: "The amount that the merchant will receive after the commission fees are deducted"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["merchant_id"], name: "index_disbursements_on_merchant_id"
+    t.index ["merchant_id", "disbursement_date"], name: "index_disbursements_on_merchant_id_and_disbursement_date", unique: true
   end
 
   create_table "merchants", force: :cascade do |t|
