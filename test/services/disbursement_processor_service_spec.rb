@@ -2,22 +2,22 @@ require_relative "../test_helper"
 
 RSpec.describe DisbursementProcessorService do
   let(:daily_merchant) do
-    ::Merchant.create!(email: 'a@a.com',
+    ::Merchant.create!(email: "a@a.com",
                        minimum_monthly_fee: 10.0,
-                       reference: 'daily_merchant',
+                       reference: "daily_merchant",
                        live_on: Date.new(2023, 1, 1),
                        disbursement_frequency: :daily)
   end
 
   let(:weekly_merchant) do
-    ::Merchant.create!(email: 'a@a.com',
+    ::Merchant.create!(email: "a@a.com",
                        minimum_monthly_fee: 10.0,
-                       reference: 'weekly_merchant',
+                       reference: "weekly_merchant",
                        live_on: Date.new(2023, 1, 1),
                        disbursement_frequency: :weekly)
   end
 
-  it 'should create the correct disbursements for both merchants' do
+  it "should create the correct disbursements for both merchants" do
     ### Given
     order1 = ::Order.create!(amount: 100.0, order_received_at: Date.new(2023, 1, 1), merchant: daily_merchant)
     order2 = ::Order.create!(amount: 200.0, order_received_at: Date.new(2023, 1, 1), merchant: daily_merchant)
@@ -52,7 +52,7 @@ RSpec.describe DisbursementProcessorService do
     expect(weekly_merchant_disbursement.disbursed_amount).to eq(210.0 - weekly_merchant_total_commission)
   end
 
-  it 'should exclude the order 3 if it is in another date' do
+  it "should exclude the order 3 if it is in another date" do
     ### Given
     order1 = ::Order.create!(amount: 100.0, order_received_at: Date.new(2023, 1, 1), merchant: daily_merchant)
     order2 = ::Order.create!(amount: 200.0, order_received_at: Date.new(2023, 1, 1), merchant: daily_merchant)
@@ -72,7 +72,7 @@ RSpec.describe DisbursementProcessorService do
     expect(daily_merchant_disbursement.disbursed_amount).to eq(300.0 - daily_merchant_total_commission)
   end
 
-  it 'should include the right orders for the weekly merchant' do
+  it "should include the right orders for the weekly merchant" do
     ### Given
     order1 = ::Order.create!(amount: 100.0, order_received_at: Date.new(2023, 1, 1), merchant: weekly_merchant)
     order2 = ::Order.create!(amount: 200.0, order_received_at: Date.new(2023, 1, 2), merchant: weekly_merchant)
@@ -83,7 +83,7 @@ RSpec.describe DisbursementProcessorService do
     order7 = ::Order.create!(amount: 700.0, order_received_at: Date.new(2023, 1, 7), merchant: weekly_merchant)
     order8 = ::Order.create!(amount: 800.0, order_received_at: Date.new(2023, 1, 8), merchant: weekly_merchant)
 
-    orders = [order2, order3, order4, order5, order6, order7, order8]
+    orders = [ order2, order3, order4, order5, order6, order7, order8 ]
 
     total_amount = orders.sum(&:amount).round(2)
     total_commission = orders.sum(&:commission_fee).round(2)
@@ -94,7 +94,7 @@ RSpec.describe DisbursementProcessorService do
     weekly_merchant_disbursement = ::Disbursement.where(merchant: weekly_merchant).first
 
     ### Then
-    expect(weekly_merchant_disbursement.orders).to include(order2, order3, order4, order5, order6, order7, order8)
+    expect(weekly_merchant_disbursement.orders).to match_array(orders)
     expect(weekly_merchant_disbursement.orders).not_to include(order1)
 
     expect(weekly_merchant_disbursement.total_amount).to eq(total_amount)
