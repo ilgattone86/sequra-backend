@@ -2,26 +2,23 @@
 #
 # Table name: disbursements
 #
-#  id                        :integer          not null, primary key
-#  merchant_id               :integer          not null
-#  disbursement_date         :date             not null
-#  total_commission          :float            default("0.0"), not null
-#  total_amount              :float            default("0.0"), not null
-#  disbursed_amount          :float            default("0.0"), not null
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  monthly_fee_compliance_id :integer
+#  id                :integer          not null, primary key
+#  merchant_id       :integer          not null
+#  disbursement_date :date             not null
+#  total_commission  :float            default("0.0"), not null
+#  total_amount      :float            default("0.0"), not null
+#  disbursed_amount  :float            default("0.0"), not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
 #
 # Indexes
 #
 #  index_disbursements_on_merchant_id_and_disbursement_date  (merchant_id,disbursement_date) UNIQUE
-#  index_disbursements_on_monthly_fee_compliance_id          (monthly_fee_compliance_id)
 #
 
 class Disbursement < ApplicationRecord
   # Associations
   belongs_to :merchant, class_name: "::Merchant"
-  belongs_to :monthly_fee_compliance, class_name: "::MonthlyFeeCompliance", optional: true
 
   has_many :orders, class_name: "::Order", dependent: :nullify
 

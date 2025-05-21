@@ -1,7 +1,7 @@
 require_relative "../test_helper"
 
 RSpec.describe DisbursementProcessorService do
-  let(:daily_merchant) do
+  let!(:daily_merchant) do
     ::Merchant.create!(email: "a@a.com",
                        minimum_monthly_fee: 10.0,
                        reference: "daily_merchant",
@@ -9,7 +9,7 @@ RSpec.describe DisbursementProcessorService do
                        disbursement_frequency: :daily)
   end
 
-  let(:weekly_merchant) do
+  let!(:weekly_merchant) do
     ::Merchant.create!(email: "a@a.com",
                        minimum_monthly_fee: 10.0,
                        reference: "weekly_merchant",
@@ -100,5 +100,22 @@ RSpec.describe DisbursementProcessorService do
     expect(weekly_merchant_disbursement.total_amount).to eq(total_amount)
     expect(weekly_merchant_disbursement.total_commission).to eq(total_commission)
     expect(weekly_merchant_disbursement.disbursed_amount).to eq(disbursed_amount)
+  end
+
+  it "should create a daily disbursement also if there are no orders for a merchant" do
+    ### When
+    ::DisbursementProcessorService.new.compute_disbursements_for(Date.new(2023, 1, 2))
+    daily_merchant_disbursement = ::Disbursement.where(merchant: daily_merchant).first
+    weekly_merchant_disbursement = ::Disbursement.where(merchant: weekly_merchant).first
+
+    ### Then
+    expect(weekly_merchant_disbursement).to be_nil
+
+    expect(daily_merchant_disbursement).not_to be_nil
+    expect(daily_merchant_disbursement.orders).to be_empty
+
+    expect(daily_merchant_disbursement.total_amount).to eq(0.0)
+    expect(daily_merchant_disbursement.total_commission).to eq(0.0)
+    expect(daily_merchant_disbursement.disbursed_amount).to eq(0.0)
   end
 end

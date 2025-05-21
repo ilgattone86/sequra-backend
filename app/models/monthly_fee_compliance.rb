@@ -11,6 +11,7 @@
 #  fee_due                     :boolean          default("false"), not null
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
+#  total_amount                :float            default("0.0"), not null
 #
 # Indexes
 #
@@ -21,11 +22,26 @@ class MonthlyFeeCompliance < ApplicationRecord
   # Associations
   belongs_to :merchant, class_name: "::Merchant"
 
-  has_many :orders, class_name: "::Order"
-  has_many :disbursements, class_name: "::Disbursement"
+  has_many :orders, class_name: "::Order", dependent: :nullify
 
   # Validations
   validates :minimum_monthly_fee, comparison: { greater_than_or_equal_to: 0.0 }
   validates :total_commissions_generated, comparison: { greater_than_or_equal_to: 0.0 }
   validates :missing_amount, comparison: { greater_than_or_equal_to: 0.0 }
+  validates :total_amount, numericality: { greater_than_or_equal_to: 0.0 }
+  validate :merchant_has_already_a_monthly_fee
+
+  # Scopes
+  scope :for_merchant, ->(merchant) { where(merchant: merchant) }
+  scope :for_year_and_month, ->(year, month) {
+    where("EXTRACT(YEAR FROM period) = ? AND EXTRACT(MONTH FROM period) = ?", year, month)
+  }
+
+  private
+
+  def merchant_has_already_a_monthly_fee
+    return if ::MonthlyFeeCompliance.where.not(id: id).for_merchant(merchant).for_year_and_month(period.year, period.month).blank?
+
+    errors.add("There is already a monthly fee compliance for this merchant in this month")
+  end
 end
