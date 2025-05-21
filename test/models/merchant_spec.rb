@@ -1,10 +1,10 @@
 require_relative "../test_helper"
 
 RSpec.describe Merchant, type: :model do
-
   it "has associations" do
     should have_many(:orders).class_name("::Order").dependent(:destroy)
     should have_many(:disbursements).class_name("::Disbursement").dependent(:destroy)
+    should have_many(:monthly_fee_compliances).class_name("::MonthlyFeeCompliance").dependent(:destroy)
   end
 
   describe "scopes" do
