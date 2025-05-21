@@ -39,6 +39,9 @@ class MonthlyFeeCompliance < ApplicationRecord
 
   private
 
+  # Validates if the merchant already has a monthly fee compliance for the same month.
+  #
+  # @return [void]
   def merchant_has_already_a_monthly_fee
     return if ::MonthlyFeeCompliance.where.not(id: id).for_merchant(merchant).for_year_and_month(period.year, period.month).blank?
 

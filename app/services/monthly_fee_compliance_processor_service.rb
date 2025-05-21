@@ -20,10 +20,7 @@ class MonthlyFeeComplianceProcessorService
         next if compliances_by_merchant[merchant.id].present?
 
         merchant_orders = orders_by_merchant_id[merchant.id] || []
-        compliance = build_compliance(merchant, merchant_orders, period_range.begin)
-        compliance.save!
-
-        ::Order.where(id: merchant_orders).update_all(monthly_fee_compliance_id: compliance.id)
+        create_compliance_for(merchant, merchant_orders, period_range.begin)
       end
     end
   end
@@ -62,13 +59,13 @@ class MonthlyFeeComplianceProcessorService
   # @param period_date [Date] the first day of the target month
   #
   # @return [::MonthlyFeeCompliance] unsaved compliance record
-  def build_compliance(merchant, orders, period_date)
-    total_amount = orders.sum(&:amount)
-    total_commission = orders.sum(&:commission_fee)
-    minimum_fee = merchant.minimum_monthly_fee
-    missing_amount = [ minimum_fee - total_commission, 0 ].max
+  def create_compliance_for(merchant, orders, period_date)
+    total_amount = orders.sum(&:amount).round(2)
+    total_commission = orders.sum(&:commission_fee).round(2)
+    minimum_fee = merchant.minimum_monthly_fee.round(2)
+    missing_amount = ([ minimum_fee - total_commission, 0 ].max).round(2)
 
-    ::MonthlyFeeCompliance.new(
+    compliance = ::MonthlyFeeCompliance.create!(
       fee_due: total_commission < minimum_fee,
       merchant: merchant,
       period: period_date,
@@ -77,5 +74,10 @@ class MonthlyFeeComplianceProcessorService
       minimum_monthly_fee: minimum_fee,
       total_commissions_generated: total_commission,
     )
+
+    # Update the orders that should be included in the compliance with the ID
+    ::Order.where(id: orders).update_all(monthly_fee_compliance_id: compliance.id)
+
+    compliance
   end
 end
