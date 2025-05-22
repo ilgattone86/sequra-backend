@@ -11,6 +11,7 @@
 require 'csv'
 
 def seed_merchants
+  puts "\nSeeding merchants..."
   merchants = []
   ::CSV.foreach('db/seeds/merchants.csv', headers: true, col_sep: ';') do |row|
     merchants << { email: row['email'],
@@ -20,9 +21,11 @@ def seed_merchants
                    disbursement_frequency: row['disbursement_frequency'] == 'DAILY' ? 0 : 1 }
   end
   ::Merchant.insert_all!(merchants)
+  puts "✅ Merchants seeded."
 end
 
 def seed_orders
+  puts "\nSeeding orders..."
   merchants_by_reference = ::Merchant.all.index_by(&:reference)
 
   orders = []
@@ -33,6 +36,7 @@ def seed_orders
                 order_received_at: Date.parse(row['created_at']) }
   end
   ::Order.insert_all!(orders)
+  puts "✅ Orders seeded."
 end
 
 # The order here is important

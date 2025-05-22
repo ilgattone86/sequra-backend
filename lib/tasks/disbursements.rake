@@ -1,5 +1,5 @@
 desc "Generate all disbursements for the orders in the db"
-namespace :disbursement do
+namespace :disbursements do
   task generate_all: :environment do
     merchants_count = ::Merchant.count
     if merchants_count.zero?
@@ -31,7 +31,7 @@ namespace :disbursement do
   end
 
   task destroy_all: :environment do
-    puts "⏳ Destroying all disbursements."
+    puts "\n⏳ Destroying all disbursements."
     ::Disbursement.destroy_all
     puts "✅ All disbursements destroyed."
   end
