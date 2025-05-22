@@ -10,9 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_21_153037) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_22_061800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "annual_reports", force: :cascade do |t|
+    t.date "from", null: false, comment: "When the report starts"
+    t.date "until", null: false, comment: "When the report ends"
+    t.integer "year", null: false, comment: "The year of the report, only one report per year is allowed"
+    t.integer "number_of_disbursements", default: 0, null: false, comment: "Total number of disbursements in the period"
+    t.float "amount_disbursed_to_merchants", default: 0.0, null: false, comment: "Total amount disbursed to merchants in the period"
+    t.float "amount_of_orders_fee", default: 0.0, null: false, comment: "Total amount of orders fee in the period"
+    t.integer "number_of_monthly_fees_charged", default: 0, null: false, comment: "How many monthly fees were charged in the period"
+    t.float "amount_of_monthly_fees_charged", default: 0.0, null: false, comment: "Total amount of monthly fees in the period"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["from"], name: "index_annual_reports_on_from"
+    t.index ["until"], name: "index_annual_reports_on_until"
+    t.index ["year"], name: "index_annual_reports_on_year", unique: true
+  end
 
   create_table "disbursements", force: :cascade do |t|
     t.bigint "merchant_id", null: false, comment: "Merchant that the disbursement belongs to"

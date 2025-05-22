@@ -26,4 +26,7 @@ class Disbursement < ApplicationRecord
   validates :total_amount, comparison: { greater_than_or_equal_to: 0.0 }
   validates :total_commission, comparison: { greater_than_or_equal_to: 0.0 }
   validates :disbursed_amount, comparison: { greater_than_or_equal_to: 0.0 }
+
+  # Scopes
+  scope :for_period, ->(period) { where(disbursement_date: period) }
 end

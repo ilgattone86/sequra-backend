@@ -36,6 +36,8 @@ class MonthlyFeeCompliance < ApplicationRecord
   scope :for_year_and_month, ->(year, month) {
     where("EXTRACT(YEAR FROM period) = ? AND EXTRACT(MONTH FROM period) = ?", year, month)
   }
+  scope :for_year, ->(year) { where("EXTRACT(YEAR FROM period) = ?", year) }
+  scope :for_fee_due, ->(fee_due) { where(fee_due: fee_due) }
 
   private
 
