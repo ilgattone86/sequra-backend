@@ -66,7 +66,7 @@ RSpec.describe AnnualReportProcessorService do
     expect(report.amount_of_orders_fee).to eq(102.0)
   end
 
-  it "should exclude from the report the disbursement that belong to another year", :focus do
+  it "should exclude from the report the disbursement that belong to another year" do
     ### Given
     ::Disbursement.create!(total_amount: 100.0,
                            total_commission: 100.0,
@@ -115,7 +115,7 @@ RSpec.describe AnnualReportProcessorService do
     expect(report.amount_of_orders_fee).to eq(102.0)
   end
 
-  it "should exclude from the report the monthly fee that belong to another year", :focus do
+  it "should exclude from the report the monthly fee that belong to another year" do
     ### Given
     ::Disbursement.create!(total_amount: 100.0,
                            total_commission: 100.0,
@@ -164,7 +164,7 @@ RSpec.describe AnnualReportProcessorService do
     expect(report.amount_of_orders_fee).to eq(100.0)
   end
 
-  it "should exclude from the report the monthly fee that is not fee due", :focus do
+  it "should exclude from the report the monthly fee that is not fee due" do
     ### Given
     ::Disbursement.create!(total_amount: 100.0,
                            total_commission: 100.0,
