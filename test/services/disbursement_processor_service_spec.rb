@@ -43,12 +43,12 @@ RSpec.describe DisbursementProcessorService do
 
     expect(daily_merchant_disbursement.orders).to include(order1, order2)
     expect(daily_merchant_disbursement.total_amount).to eq(300.0)
-    expect(daily_merchant_disbursement.total_commission).to eq(daily_merchant_total_commission)
+    expect(daily_merchant_disbursement.total_commission_fee).to eq(daily_merchant_total_commission)
     expect(daily_merchant_disbursement.disbursed_amount).to eq(300.0 - daily_merchant_total_commission)
 
     expect(weekly_merchant_disbursement.orders).to include(order3, order4)
     expect(weekly_merchant_disbursement.total_amount).to eq(210.0)
-    expect(weekly_merchant_disbursement.total_commission).to eq(weekly_merchant_total_commission)
+    expect(weekly_merchant_disbursement.total_commission_fee).to eq(weekly_merchant_total_commission)
     expect(weekly_merchant_disbursement.disbursed_amount).to eq(210.0 - weekly_merchant_total_commission)
   end
 
@@ -68,7 +68,7 @@ RSpec.describe DisbursementProcessorService do
     expect(daily_merchant_disbursement.orders).not_to include(order3)
 
     expect(daily_merchant_disbursement.total_amount).to eq(300.0)
-    expect(daily_merchant_disbursement.total_commission).to eq(daily_merchant_total_commission)
+    expect(daily_merchant_disbursement.total_commission_fee).to eq(daily_merchant_total_commission)
     expect(daily_merchant_disbursement.disbursed_amount).to eq(300.0 - daily_merchant_total_commission)
   end
 
@@ -98,7 +98,7 @@ RSpec.describe DisbursementProcessorService do
     expect(weekly_merchant_disbursement.orders).not_to include(order1)
 
     expect(weekly_merchant_disbursement.total_amount).to eq(total_amount)
-    expect(weekly_merchant_disbursement.total_commission).to eq(total_commission)
+    expect(weekly_merchant_disbursement.total_commission_fee).to eq(total_commission)
     expect(weekly_merchant_disbursement.disbursed_amount).to eq(disbursed_amount)
   end
 
@@ -115,7 +115,7 @@ RSpec.describe DisbursementProcessorService do
     expect(daily_merchant_disbursement.orders).to be_empty
 
     expect(daily_merchant_disbursement.total_amount).to eq(0.0)
-    expect(daily_merchant_disbursement.total_commission).to eq(0.0)
+    expect(daily_merchant_disbursement.total_commission_fee).to eq(0.0)
     expect(daily_merchant_disbursement.disbursed_amount).to eq(0.0)
   end
 end

@@ -68,11 +68,11 @@ class DisbursementProcessorService
     disbursed_amount = (total_amount - total_commission).round(2)
 
     disbursement = ::Disbursement.create!(
-      disbursement_date: date,
       merchant: merchant,
+      disbursement_date: date,
       total_amount: total_amount,
-      total_commission: total_commission,
-      disbursed_amount: disbursed_amount
+      disbursed_amount: disbursed_amount,
+      total_commission_fee: total_commission
     )
 
     # Update the orders that should be included in the disbursement with the ID

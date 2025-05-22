@@ -20,14 +20,14 @@ RSpec.describe AnnualReportProcessorService do
   it "should create the annual reports correctly" do
     ### Given
     ::Disbursement.create!(total_amount: 100.0,
-                           total_commission: 100.0,
                            disbursed_amount: 100.0,
+                           total_commission_fee: 100.0,
                            disbursement_date: Date.today,
                            merchant_id: daily_merchant.id)
 
     ::Disbursement.create!(total_amount: 2.0,
-                           total_commission: 2.0,
                            disbursed_amount: 2.0,
+                           total_commission_fee: 2.0,
                            disbursement_date: Date.tomorrow,
                            merchant_id: weekly_merchant.id)
 
@@ -37,7 +37,7 @@ RSpec.describe AnnualReportProcessorService do
                                    missing_amount: 10.0,
                                    merchant: daily_merchant,
                                    minimum_monthly_fee: 10.0,
-                                   total_commissions_generated: 100.0)
+                                   total_commissions_fees_generated: 100.0)
 
     ::MonthlyFeeCompliance.create!(fee_due: true,
                                    period: Date.today,
@@ -45,7 +45,7 @@ RSpec.describe AnnualReportProcessorService do
                                    missing_amount: 2.0,
                                    merchant: weekly_merchant,
                                    minimum_monthly_fee: 2.0,
-                                   total_commissions_generated: 2.0)
+                                   total_commissions_fees_generated: 2.0)
 
     reports_before = ::AnnualReport.count
 
@@ -63,19 +63,19 @@ RSpec.describe AnnualReportProcessorService do
     expect(report.amount_disbursed_to_merchants).to eq(102.0)
     expect(report.number_of_monthly_fees_charged).to eq(2)
     expect(report.amount_of_monthly_fees_charged).to eq(12.0)
-    expect(report.amount_of_orders_fee).to eq(102.0)
+    expect(report.amount_of_orders_commission_fee).to eq(102.0)
   end
 
   it "should exclude from the report the disbursement that belong to another year" do
     ### Given
     ::Disbursement.create!(total_amount: 100.0,
-                           total_commission: 100.0,
+                           total_commission_fee: 100.0,
                            disbursed_amount: 100.0,
                            disbursement_date: Date.today,
                            merchant_id: daily_merchant.id)
 
     ::Disbursement.create!(total_amount: 2.0,
-                           total_commission: 2.0,
+                           total_commission_fee: 2.0,
                            disbursed_amount: 2.0,
                            disbursement_date: Date.tomorrow + 1.year,
                            merchant_id: weekly_merchant.id)
@@ -86,7 +86,7 @@ RSpec.describe AnnualReportProcessorService do
                                    missing_amount: 10.0,
                                    merchant: daily_merchant,
                                    minimum_monthly_fee: 10.0,
-                                   total_commissions_generated: 100.0)
+                                   total_commissions_fees_generated: 100.0)
 
     ::MonthlyFeeCompliance.create!(fee_due: true,
                                    period: Date.today,
@@ -94,7 +94,7 @@ RSpec.describe AnnualReportProcessorService do
                                    missing_amount: 2.0,
                                    merchant: weekly_merchant,
                                    minimum_monthly_fee: 2.0,
-                                   total_commissions_generated: 2.0)
+                                   total_commissions_fees_generated: 2.0)
 
     reports_before = ::AnnualReport.count
 
@@ -112,19 +112,19 @@ RSpec.describe AnnualReportProcessorService do
     expect(report.amount_disbursed_to_merchants).to eq(100.0)
     expect(report.number_of_monthly_fees_charged).to eq(2)
     expect(report.amount_of_monthly_fees_charged).to eq(12.0)
-    expect(report.amount_of_orders_fee).to eq(102.0)
+    expect(report.amount_of_orders_commission_fee).to eq(102.0)
   end
 
   it "should exclude from the report the monthly fee that belong to another year" do
     ### Given
     ::Disbursement.create!(total_amount: 100.0,
-                           total_commission: 100.0,
+                           total_commission_fee: 100.0,
                            disbursed_amount: 100.0,
                            disbursement_date: Date.today,
                            merchant_id: daily_merchant.id)
 
     ::Disbursement.create!(total_amount: 2.0,
-                           total_commission: 2.0,
+                           total_commission_fee: 2.0,
                            disbursed_amount: 2.0,
                            disbursement_date: Date.today,
                            merchant_id: weekly_merchant.id)
@@ -135,7 +135,7 @@ RSpec.describe AnnualReportProcessorService do
                                    missing_amount: 10.0,
                                    merchant: daily_merchant,
                                    minimum_monthly_fee: 10.0,
-                                   total_commissions_generated: 100.0)
+                                   total_commissions_fees_generated: 100.0)
 
     ::MonthlyFeeCompliance.create!(fee_due: true,
                                    period: Date.today + 1.year,
@@ -143,7 +143,7 @@ RSpec.describe AnnualReportProcessorService do
                                    missing_amount: 2.0,
                                    merchant: weekly_merchant,
                                    minimum_monthly_fee: 2.0,
-                                   total_commissions_generated: 2.0)
+                                   total_commissions_fees_generated: 2.0)
 
     reports_before = ::AnnualReport.count
 
@@ -161,19 +161,19 @@ RSpec.describe AnnualReportProcessorService do
     expect(report.amount_disbursed_to_merchants).to eq(102.0)
     expect(report.number_of_monthly_fees_charged).to eq(1)
     expect(report.amount_of_monthly_fees_charged).to eq(10.0)
-    expect(report.amount_of_orders_fee).to eq(100.0)
+    expect(report.amount_of_orders_commission_fee).to eq(100.0)
   end
 
   it "should exclude from the report the monthly fee that is not fee due" do
     ### Given
     ::Disbursement.create!(total_amount: 100.0,
-                           total_commission: 100.0,
+                           total_commission_fee: 100.0,
                            disbursed_amount: 100.0,
                            disbursement_date: Date.today,
                            merchant_id: daily_merchant.id)
 
     ::Disbursement.create!(total_amount: 2.0,
-                           total_commission: 2.0,
+                           total_commission_fee: 2.0,
                            disbursed_amount: 2.0,
                            disbursement_date: Date.today,
                            merchant_id: weekly_merchant.id)
@@ -184,7 +184,7 @@ RSpec.describe AnnualReportProcessorService do
                                    missing_amount: 10.0,
                                    merchant: daily_merchant,
                                    minimum_monthly_fee: 10.0,
-                                   total_commissions_generated: 100.0)
+                                   total_commissions_fees_generated: 100.0)
 
     ::MonthlyFeeCompliance.create!(fee_due: false,
                                    period: Date.today,
@@ -192,7 +192,7 @@ RSpec.describe AnnualReportProcessorService do
                                    missing_amount: 2.0,
                                    merchant: weekly_merchant,
                                    minimum_monthly_fee: 2.0,
-                                   total_commissions_generated: 2.0)
+                                   total_commissions_fees_generated: 2.0)
 
     reports_before = ::AnnualReport.count
 
@@ -210,6 +210,6 @@ RSpec.describe AnnualReportProcessorService do
     expect(report.amount_disbursed_to_merchants).to eq(102.0)
     expect(report.number_of_monthly_fees_charged).to eq(1)
     expect(report.amount_of_monthly_fees_charged).to eq(10.0)
-    expect(report.amount_of_orders_fee).to eq(102.0)
+    expect(report.amount_of_orders_commission_fee).to eq(102.0)
   end
 end

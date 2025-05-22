@@ -44,13 +44,13 @@ RSpec.describe MonthlyFeeComplianceProcessorService do
     expect(daily_merchant_compliance.orders).to match_array([ order1, order2 ])
     expect(daily_merchant_compliance.total_amount).to eq(300.0)
     expect(daily_merchant_compliance.minimum_monthly_fee).to eq(10.0)
-    expect(daily_merchant_compliance.total_commissions_generated).to eq(daily_merchant_total_commission)
+    expect(daily_merchant_compliance.total_commissions_fees_generated).to eq(daily_merchant_total_commission)
     expect(daily_merchant_compliance.missing_amount).to eq(7.15)
     expect(daily_merchant_compliance.fee_due).to be(true)
 
     expect(weekly_merchant_compliance.orders).to match_array([ order3, order4 ])
     expect(weekly_merchant_compliance.total_amount).to eq(210.0)
-    expect(weekly_merchant_compliance.total_commissions_generated).to eq(weekly_merchant_total_commission)
+    expect(weekly_merchant_compliance.total_commissions_fees_generated).to eq(weekly_merchant_total_commission)
     expect(weekly_merchant_compliance.minimum_monthly_fee).to eq(10.0)
     expect(weekly_merchant_compliance.missing_amount).to eq(8.0)
     expect(weekly_merchant_compliance.fee_due).to be(true)
@@ -109,6 +109,6 @@ RSpec.describe MonthlyFeeComplianceProcessorService do
     expect(daily_merchant_compliance.orders).not_to include(order3)
     expect(daily_merchant_compliance.minimum_monthly_fee).to eq(10.0)
     expect(daily_merchant_compliance.orders).to match_array([ order1, order2 ])
-    expect(daily_merchant_compliance.total_commissions_generated).to eq(daily_merchant_total_commission)
+    expect(daily_merchant_compliance.total_commissions_fees_generated).to eq(daily_merchant_total_commission)
   end
 end

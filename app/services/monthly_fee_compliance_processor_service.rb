@@ -72,7 +72,7 @@ class MonthlyFeeComplianceProcessorService
       total_amount: total_amount,
       missing_amount: missing_amount,
       minimum_monthly_fee: minimum_fee,
-      total_commissions_generated: total_commission,
+      total_commissions_fees_generated: total_commission
     )
 
     # Update the orders that should be included in the compliance with the ID

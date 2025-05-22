@@ -2,14 +2,14 @@
 #
 # Table name: disbursements
 #
-#  id                :integer          not null, primary key
-#  merchant_id       :integer          not null
-#  disbursement_date :date             not null
-#  total_commission  :float            default("0.0"), not null
-#  total_amount      :float            default("0.0"), not null
-#  disbursed_amount  :float            default("0.0"), not null
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
+#  id                   :integer          not null, primary key
+#  merchant_id          :integer          not null
+#  disbursement_date    :date             not null
+#  total_commission_fee :float            default("0.0"), not null
+#  total_amount         :float            default("0.0"), not null
+#  disbursed_amount     :float            default("0.0"), not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
 #
 # Indexes
 #
@@ -24,8 +24,8 @@ class Disbursement < ApplicationRecord
 
   # Validations
   validates :total_amount, comparison: { greater_than_or_equal_to: 0.0 }
-  validates :total_commission, comparison: { greater_than_or_equal_to: 0.0 }
   validates :disbursed_amount, comparison: { greater_than_or_equal_to: 0.0 }
+  validates :total_commission_fee, comparison: { greater_than_or_equal_to: 0.0 }
 
   # Scopes
   scope :for_period, ->(period) { where(disbursement_date: period) }
