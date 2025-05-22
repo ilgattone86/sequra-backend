@@ -19,6 +19,8 @@
 #
 
 class MonthlyFeeCompliance < ApplicationRecord
+  attributes_to_round_up :minimum_monthly_fee, :total_commissions_fees_generated, :missing_amount, :total_amount
+
   # Associations
   belongs_to :merchant, class_name: "::Merchant"
 

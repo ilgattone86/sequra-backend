@@ -8,7 +8,8 @@ class AnnualReportProcessorService
   #
   # @return [void]
   def compute_report_for(date)
-    raise "The report for the year #{date.year} already exists" if ::AnnualReport.exists?(year: date.year)
+    existing_annual_report = ::AnnualReport.find_by(year: date.year)
+    return existing_annual_report if existing_annual_report
 
     year_range = date.beginning_of_year..date.end_of_year
 

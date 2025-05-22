@@ -22,10 +22,17 @@
 #
 
 class AnnualReport < ApplicationRecord
+  attributes_to_round_up :amount_disbursed_to_merchants,
+                         :amount_of_monthly_fees_charged,
+                         :amount_of_orders_commission_fee
+
   # Validations
   validates :number_of_disbursements, comparison: { greater_than_or_equal_to: 0.0 }
   validates :amount_disbursed_to_merchants, comparison: { greater_than_or_equal_to: 0.0 }
   validates :amount_of_orders_commission_fee, comparison: { greater_than_or_equal_to: 0.0 }
   validates :number_of_monthly_fees_charged, comparison: { greater_than_or_equal_to: 0.0 }
   validates :amount_of_monthly_fees_charged, comparison: { greater_than_or_equal_to: 0.0 }
+
+  # Scopes
+  scope :for_year, ->(year) { where(year: year) }
 end

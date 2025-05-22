@@ -17,6 +17,8 @@
 #
 
 class Disbursement < ApplicationRecord
+  attributes_to_round_up :total_commission_fee, :total_amount, :disbursed_amount
+
   # Associations
   belongs_to :merchant, class_name: "::Merchant"
 
