@@ -60,4 +60,10 @@ group :development, :test do
 
   # Clean the database between tests
   gem 'database_cleaner-active_record'
+
+  # Pretty print tables in console
+  gem "console_table"
+
+  # Colorize console stuff
+  gem "colorize"
 end
