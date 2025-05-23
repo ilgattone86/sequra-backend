@@ -11,12 +11,13 @@ class DisbursementProcessorService
   #
   # @return [void]
   def compute_disbursements_for(date)
-    merchants = disbursable_merchants(date)
-    orders_by_merchant = orders_to_disburse_for_merchants(merchants, date)
+    merchants_with_disbursements = disbursements_by_merchant(date)
+    orders_by_merchant = orders_to_disburse_for_merchants(date)
 
     ::ApplicationRecord.transaction do
-      merchants.each do |merchant|
-        orders = orders_by_merchant[merchant.id] || []
+      orders_by_merchant.each do |merchant, orders|
+        next if merchants_with_disbursements.include?(merchant.id)
+
         create_disbursement_for(merchant, orders, date)
       end
     end
@@ -24,45 +25,47 @@ class DisbursementProcessorService
 
   private
 
-  # Returns the list of merchants that should be disbursed on the given date.
+  # Returns an array of merchant IDs that have disbursements for the given date.
   #
-  # @param [Date] date The date to check eligibility.
+  # @param [Date] date The date to check for disbursements.
   #
-  # @return [ActiveRecord::Relation<::Merchant>]
-  def disbursable_merchants(date)
-    ::Merchant.live_before(date).daily.or(
-      ::Merchant.live_before(date).weekly.for_live_on_week_day(date)
-    )
+  # @return [Array<Integer>]
+  def disbursements_by_merchant(date)
+    ::Disbursement.for_disbursement_date(date).pluck(:merchant_id)
   end
 
   # Returns a hash mapping merchant IDs to their eligible orders.
   #
-  # @param [ActiveRecord::Relation<::Merchant>] merchants The merchants to include.
   # @param [Date] date The date for which to fetch orders.
   #
-  # @return [Hash{Integer => Array<::Order>}]
-  def orders_to_disburse_for_merchants(merchants, date)
+  # @return [Hash{Merchant => Array<::Order>}]
+  def orders_to_disburse_for_merchants(date)
+    merchants = ::Merchant.live_before(date)
     orders_not_disbursed = ::Order.not_disbursed
 
     daily_orders = orders_not_disbursed.for_order_received_at(date)
                                        .joins(:merchant)
-                                       .merge(::Merchant.where(id: merchants).daily)
+                                       .merge(merchants.daily)
 
     weekly_orders = orders_not_disbursed.for_order_received_in_range((date - 6.days)..date)
                                         .joins(:merchant)
-                                        .merge(::Merchant.where(id: merchants).weekly)
+                                        .merge(merchants.weekly.for_live_on_week_day(date))
 
-    daily_orders.or(weekly_orders).group_by(&:merchant_id)
+    daily_orders.or(weekly_orders).includes(:merchant).group_by(&:merchant)
   end
 
   # Creates a disbursement record and assigns orders to it.
   #
-  # @param [::Merchant] merchant The merchant receiving the disbursement.
+  # If there are no orders it won't create a disbursement.
+  #
+  # @param [Merchant] merchant The merchant receiving the disbursement.
   # @param [Array<::Order>] orders The orders to include in the disbursement.
   # @param [Date] date The disbursement date.
   #
   # @return [::Disbursement] The created disbursement record.
   def create_disbursement_for(merchant, orders, date)
+    return if orders.blank?
+
     total_amount = orders.sum(&:amount).round(2)
     total_commission = orders.sum(&:commission_fee).round(2)
     disbursed_amount = (total_amount - total_commission).round(2)

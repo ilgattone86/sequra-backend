@@ -29,4 +29,5 @@ class Disbursement < ApplicationRecord
 
   # Scopes
   scope :for_period, ->(period) { where(disbursement_date: period) }
+  scope :for_disbursement_date, ->(disbursement_date) { where(disbursement_date: disbursement_date) }
 end

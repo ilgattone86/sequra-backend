@@ -102,20 +102,30 @@ RSpec.describe DisbursementProcessorService do
     expect(weekly_merchant_disbursement.disbursed_amount).to eq(disbursed_amount)
   end
 
-  it "should create a daily disbursement also if there are no orders for a merchant" do
+  it "should not create a daily disbursement if there are no orders for a merchant" do
     ### When
     ::DisbursementProcessorService.new.compute_disbursements_for(Date.new(2023, 1, 2))
     daily_merchant_disbursement = ::Disbursement.where(merchant: daily_merchant).first
     weekly_merchant_disbursement = ::Disbursement.where(merchant: weekly_merchant).first
 
     ### Then
+    expect(daily_merchant_disbursement).to be_nil
     expect(weekly_merchant_disbursement).to be_nil
+  end
 
-    expect(daily_merchant_disbursement).not_to be_nil
-    expect(daily_merchant_disbursement.orders).to be_empty
+  it "should not create another disbursement if it already exists" do
+    ### Given
+    date = Date.new(2023, 1, 1)
+    ::Order.create!(amount: 100.0, order_received_at: date, merchant: daily_merchant)
+    ::DisbursementProcessorService.new.compute_disbursements_for(date)
 
-    expect(daily_merchant_disbursement.total_amount).to eq(0.0)
-    expect(daily_merchant_disbursement.total_commission_fee).to eq(0.0)
-    expect(daily_merchant_disbursement.disbursed_amount).to eq(0.0)
+    disbursements_before = ::Disbursement.all
+
+    ### When
+    ::DisbursementProcessorService.new.compute_disbursements_for(date)
+    disbursements_after = ::Disbursement.all
+
+    ### Then
+    expect(disbursements_before).to eq(disbursements_after)
   end
 end
