@@ -13,8 +13,6 @@
 #
 
 class Merchant < ApplicationRecord
-  attributes_to_round_up :minimum_monthly_fee
-
   # Associations
   has_many :orders, class_name: "::Order", dependent: :destroy
   has_many :disbursements, class_name: "::Disbursement", dependent: :destroy

@@ -20,8 +20,6 @@
 #
 
 class Order < ApplicationRecord
-  attributes_to_round_up :amount
-
   # Associations
   belongs_to :merchant, class_name: "::Merchant"
   belongs_to :disbursement, class_name: "::Disbursement", optional: true
